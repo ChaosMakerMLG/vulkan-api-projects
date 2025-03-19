@@ -4,6 +4,7 @@ EXECUTABLE = Main
 
 VulkanRun: main.cpp
 	g++ $(CFLAGS) -o $(EXECUTABLE) main.cpp $(LDFLAGS)
+	sh compile.sh
 
 .PHONY: testrun clean
 
