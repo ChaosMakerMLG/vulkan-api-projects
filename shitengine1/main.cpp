@@ -17,6 +17,8 @@
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 
+const int MAX_FRAMES_IN_FLIGHT = 2;
+
 const std::vector<const char*> validationLayers = {
     "VK_LAYER_KHRONOS_validation"
 };
@@ -141,7 +143,7 @@ class TriangleApplication {
             fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
             if(vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS ||
-               vkCreateSemaphore(device, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS ||
+               vkCreateSemaphore(device, &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS ||
                vkCreateFence(device, &fenceInfo, nullptr, &inFlightFence) != VK_SUCCESS) {
                 throw std::runtime_error("failed to create semaphores");
                }
@@ -189,7 +191,7 @@ class TriangleApplication {
             scissor.extent = swapChainExtent;
             vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
-            vkCmdDraw(commandBuffer, 3, 1, 0, 0);
+            vkCmdDraw(commandBuffer, 4, 1, 0, 0);
             vkCmdEndRenderPass(commandBuffer);
 
             if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
@@ -584,13 +586,6 @@ class TriangleApplication {
 
             }
 
-            VkDeviceQueueCreateInfo queueCreateInfo{};
-            queueCreateInfo.sType =  VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-            queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-            queueCreateInfo.queueCount = 1;
-
-            queueCreateInfo.pQueuePriorities = &queuePriority;
-
             VkPhysicalDeviceFeatures deviceFeatures{};
 
             VkDeviceCreateInfo createInfo{};
@@ -615,6 +610,7 @@ class TriangleApplication {
             }
 
             vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
+            vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
         }
 
         void pickPhysicalDevice() {
@@ -692,10 +688,10 @@ class TriangleApplication {
             VkSubmitInfo submitInfo{};
             submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-            VkSemaphore waitSeaphores[] = {imageAvailableSemaphore};
+            VkSemaphore waitSemaphores[] = {imageAvailableSemaphore};
             VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
             submitInfo.waitSemaphoreCount = 1;
-            submitInfo.pWaitSemaphores = waitSeaphores;
+            submitInfo.pWaitSemaphores = waitSemaphores;
             submitInfo.pWaitDstStageMask = waitStages;
             submitInfo.commandBufferCount = 1;
             submitInfo.pCommandBuffers = &commandBuffer;
