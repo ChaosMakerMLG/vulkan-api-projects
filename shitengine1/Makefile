@@ -1,4 +1,4 @@
-CFLAGS = -std=c++17 #add -O2 for performance
+CFLAGS = -std=c++17 -O2
 LDFLAGS = -lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi
 EXECUTABLE = Main
 
@@ -9,7 +9,7 @@ VulkanRun: main.cpp
 .PHONY: testrun clean
 
 testrun: VulkanRun
-	kitty ./$(EXECUTABLE)
+	./$(EXECUTABLE)
 
 clean:
 	rm -f $(EXECUTABLE)
