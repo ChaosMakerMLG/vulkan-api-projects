@@ -894,7 +894,6 @@ class TriangleApplication {
 
             vkDestroyCommandPool(device, commandPool, nullptr);
 
-            vkDestroySwapchainKHR(device, swapChain, nullptr);
             vkDestroyDevice(device, nullptr);
             if (enableValidationLayers) {
                 DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
