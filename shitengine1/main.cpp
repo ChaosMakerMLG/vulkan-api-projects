@@ -879,12 +879,12 @@ class TriangleApplication {
         void cleanup() {
             cleanupSwapChain();
             
-            vkDestroyBuffer(device, vertexBuffer, nullptr);
-            vkFreeMemory(device, vertexBufferMemory, nullptr);
             vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
             vkDestroyPipeline(device, graphicsPipeline, nullptr);
-
             vkDestroyRenderPass(device, renderPass, nullptr);
+            
+            vkDestroyBuffer(device, vertexBuffer, nullptr);
+            vkFreeMemory(device, vertexBufferMemory, nullptr);
             
             for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
                 vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
@@ -893,10 +893,6 @@ class TriangleApplication {
             }
 
             vkDestroyCommandPool(device, commandPool, nullptr);
-
-            for (auto imageView : swapChainImageViews) {
-                vkDestroyImageView(device, imageView, nullptr);
-            }
 
             vkDestroySwapchainKHR(device, swapChain, nullptr);
             vkDestroyDevice(device, nullptr);
